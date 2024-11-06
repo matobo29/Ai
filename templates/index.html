@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>CRM System</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Revenue Services Lesotho</h1>
+        <h1>Customer Support</h1>
+        <div id="chatContainer">
+            <div id="chat"></div>
+        </div>
+        <form id="queryForm">
+            <input type="text" id="query" placeholder="Ask your question here..." required>
+            <button type="submit">GO</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('queryForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const query = document.getElementById('query').value;
+            displayMessage(query, 'user');
+            const response = await fetch('/ask', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query })
+            });
+            const data = await response.json();
+            displayMessage(data.response, 'bot');
+            document.getElementById('query').value = ''; // Clear the input field
+        };
+
+        function displayMessage(message, sender) {
+            const chat = document.getElementById('chat');
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add(sender);
+            messageDiv.textContent = message;
+            chat.appendChild(messageDiv);
+            chat.scrollTop = chat.scrollHeight; // Scroll to the bottom
+        }
+    </script>
+</body>
+</html>
